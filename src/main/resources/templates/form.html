@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Student Form</title>
+    <style>
+        body { font-family: Arial; margin: 40px; }
+        input, select { display: block; margin: 8px 0;
+            padding: 8px; width: 300px; }
+        span { color: red; font-size: 13px; }
+        button { margin-top: 15px; padding: 10px 25px;
+            background: blue; color: white; border: none; }
+    </style>
+</head>
+<body>
+<h2>Student Registration Form</h2>
+<form th:action="@{/submit}" th:object="${student}" method="post">
+
+    <label>Name:</label>
+    <input type="text" th:field="*{name}" placeholder="Enter name"/>
+    <span th:if="${#fields.hasErrors('name')}"
+          th:errors="*{name}"></span>
+
+    <label>Gender:</label>
+    <select th:field="*{gender}">
+        <option value="">-- Select --</option>
+        <option value="Male">Male</option>
+        <option value="Female">Female</option>
+        <option value="Other">Other</option>
+    </select>
+
+    <label>Department:</label>
+    <input type="text" th:field="*{department}"
+           placeholder="e.g. Computer Science"/>
+
+    <label>College Name:</label>
+    <input type="text" th:field="*{collegeName}"
+           placeholder="Enter college name"/>
+
+    <label>City:</label>
+    <input type="text" th:field="*{city}" placeholder="Enter city"/>
+
+    <label>State:</label>
+    <input type="text" th:field="*{state}" placeholder="Enter state"/>
+
+    <label>Pincode:</label>
+    <input type="text" th:field="*{pincode}"
+           placeholder="6 digit pincode"/>
+
+    <button type="submit">Submit</button>
+</form>
+</body>
+</html>
