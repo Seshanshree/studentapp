@@ -1,52 +1,282 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
-    <title>Student Form</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Student Registration | Modern Form</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
     <style>
-        body { font-family: Arial; margin: 40px; }
-        input, select { display: block; margin: 8px 0;
-            padding: 8px; width: 300px; }
-        span { color: red; font-size: 13px; }
-        button { margin-top: 15px; padding: 10px 25px;
-            background: blue; color: white; border: none; }
+        /* ----- CSS RESET & VARIABLES (same modern design) ----- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --shadow-sm: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+            --border-radius: 24px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --input-border: #e2e8f0;
+            --input-focus: #667eea;
+            --label-color: #2d3748;
+            --error-color: #e53e3e;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+            background: var(--primary-gradient);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem 1.5rem;
+            position: relative;
+            line-height: 1.5;
+        }
+
+        /* Animated background blobs */
+        body::before, body::after {
+            content: '';
+            position: fixed;
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+        }
+        body::before { top: -100px; left: -100px; }
+        body::after { bottom: -100px; right: -100px; }
+
+        /* Main form container */
+        form {
+            max-width: 900px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--card-bg);
+            backdrop-filter: blur(2px);
+            border-radius: var(--border-radius);
+            padding: 2.5rem;
+            box-shadow: var(--shadow-lg);
+            transition: var(--transition);
+            animation: fadeSlideUp 0.5s ease-out;
+            position: relative;
+            z-index: 2;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
+        /* Full-width items */
+        .full-width {
+            grid-column: span 2;
+        }
+
+        /* Form header */
+        .form-header {
+            text-align: center;
+            margin-bottom: 0;
+            padding-bottom: 1rem;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+        }
+        .form-header h1 {
+            font-size: 1.9rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            letter-spacing: -0.02em;
+        }
+        .form-header span { font-size: 2rem; }
+
+        /* Input groups */
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--label-color);
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        input, select {
+            padding: 0.85rem 1rem;
+            border: 2px solid var(--input-border);
+            border-radius: 16px;
+            font-size: 0.95rem;
+            transition: var(--transition);
+            background: white;
+            font-family: 'Inter', sans-serif;
+            outline: none;
+            width: 100%;
+        }
+
+        input:focus, select:focus {
+            border-color: var(--input-focus);
+            box-shadow: 0 0 0 4px rgba(102, 126, 234, 0.15);
+        }
+
+        /* Error styling */
+        .error {
+            color: var(--error-color);
+            font-size: 0.75rem;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        input.error-field, select.error-field {
+            border-color: var(--error-color);
+        }
+
+        /* Submit button */
+        .submit-btn {
+            background: var(--primary-gradient);
+            color: white;
+            padding: 1rem;
+            border: none;
+            border-radius: 18px;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-sm);
+            filter: brightness(1.02);
+        }
+        .submit-btn:active { transform: translateY(1px); }
+
+        /* Custom select arrow */
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%23666eea' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><polyline points='6 9 12 15 18 9'></polyline></svg>");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1.2rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 700px) {
+            body { padding: 1rem; }
+            form { padding: 1.5rem; gap: 1.2rem; }
+            .input-group { grid-column: span 2 !important; }
+            .form-header h1 { font-size: 1.5rem; }
+        }
+
+        @keyframes fadeSlideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hint {
+            font-size: 0.7rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 0.5rem;
+            font-size: 0.75rem;
+            color: #4a5568;
+        }
     </style>
 </head>
 <body>
-<h2>Student Registration Form</h2>
+
+<!-- Thymeleaf form with object binding -->
 <form th:action="@{/submit}" th:object="${student}" method="post">
 
-    <label>Name:</label>
-    <input type="text" th:field="*{name}" placeholder="Enter name"/>
-    <span th:if="${#fields.hasErrors('name')}"
-          th:errors="*{name}"></span>
+    <!-- Header -->
+    <div class="full-width form-header">
+        <span>📝</span>
+        <h1>Student Registration</h1>
+    </div>
 
-    <label>Gender:</label>
-    <select th:field="*{gender}">
-        <option value="">-- Select --</option>
-        <option value="Male">Male</option>
-        <option value="Female">Female</option>
-        <option value="Other">Other</option>
-    </select>
+    <!-- Name -->
+    <div class="input-group">
+        <label>👤 Full Name</label>
+        <input type="text" th:field="*{name}" placeholder="e.g. Rohan Sharma" required />
+        <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error"></span>
+    </div>
 
-    <label>Department:</label>
-    <input type="text" th:field="*{department}"
-           placeholder="e.g. Computer Science"/>
+    <!-- Gender -->
+    <div class="input-group">
+        <label>⚥ Gender</label>
+        <select th:field="*{gender}" required>
+            <option value="">-- Select --</option>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+            <option value="Other">Other</option>
+        </select>
+        <span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="error"></span>
+    </div>
 
-    <label>College Name:</label>
-    <input type="text" th:field="*{collegeName}"
-           placeholder="Enter college name"/>
+    <!-- Department -->
+    <div class="input-group full-width">
+        <label>🏛️ Department</label>
+        <input type="text" th:field="*{department}" placeholder="e.g. Computer Science, Engineering" required />
+        <span th:if="${#fields.hasErrors('department')}" th:errors="*{department}" class="error"></span>
+    </div>
 
-    <label>City:</label>
-    <input type="text" th:field="*{city}" placeholder="Enter city"/>
+    <!-- College Name -->
+    <div class="input-group full-width">
+        <label>🏫 College Name</label>
+        <input type="text" th:field="*{collegeName}" placeholder="Full college / university name" required />
+        <span th:if="${#fields.hasErrors('collegeName')}" th:errors="*{collegeName}" class="error"></span>
+    </div>
 
-    <label>State:</label>
-    <input type="text" th:field="*{state}" placeholder="Enter state"/>
+    <!-- City -->
+    <div class="input-group">
+        <label>🌆 City</label>
+        <input type="text" th:field="*{city}" placeholder="e.g. Mumbai" required />
+        <span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="error"></span>
+    </div>
 
-    <label>Pincode:</label>
-    <input type="text" th:field="*{pincode}"
-           placeholder="6 digit pincode"/>
+    <!-- State -->
+    <div class="input-group">
+        <label>🗺️ State</label>
+        <input type="text" th:field="*{state}" placeholder="e.g. Maharashtra" required />
+        <span th:if="${#fields.hasErrors('state')}" th:errors="*{state}" class="error"></span>
+    </div>
 
-    <button type="submit">Submit</button>
+    <!-- Pincode -->
+    <div class="input-group full-width">
+        <label>📮 PIN Code</label>
+        <input type="text" th:field="*{pincode}" placeholder="6-digit postal code" pattern="[0-9]{6}" maxlength="6" required />
+        <div class="hint">Enter exactly 6 digits</div>
+        <span th:if="${#fields.hasErrors('pincode')}" th:errors="*{pincode}" class="error"></span>
+    </div>
+
+    <!-- Submit button -->
+    <div class="full-width">
+        <button type="submit" class="submit-btn">✨ Register Now</button>
+    </div>
+
+    <footer class="full-width">
+        🌟 Secure & fast registration | All fields are required
+    </footer>
 </form>
+
 </body>
 </html>
